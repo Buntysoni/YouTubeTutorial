@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using YouTubeTutorial.BLL.Interface;
 using YouTubeTutorial.Data.context;
 
@@ -26,11 +27,21 @@ namespace YouTubeTutorial.Controllers
         [HttpGet("GetData")]
         public IActionResult GetData()
         {
-            return Ok("Hii, Viewers");
+            var studentJoinData = _context.tbl_student.Include(x=>x.tbl_subject).ToList();
+
+            var studentJoinDataTwo = _context.tbl_student.Join(_context.tbl_subject, st => st.subjectid, sb => sb.subjectid,
+                (st, sb) => new
+                {
+                    st.studentid,
+                    st.name,
+                    sb.subjectname
+                }).ToList();
+
+            return Ok(studentJoinDataTwo);
         }
 
         [HttpPost("SaveDataQueryString")]
-        public IActionResult SaveDataQueryString(string firstname, string lastname) 
+        public IActionResult SaveDataQueryString(string firstname, string lastname)
         {
             return Ok(firstname + lastname);
         }
@@ -82,7 +93,7 @@ namespace YouTubeTutorial.Controllers
             var users = _usersRepository.DeleteUser(model);
             return Ok(users);
         }
-        
+
         [HttpPost("DeleteByRange")]
         public IActionResult DeleteByRange(List<Users> model)
         {
@@ -98,7 +109,7 @@ namespace YouTubeTutorial.Controllers
         }
 
         #region test model
-        public class SaveDataModel 
+        public class SaveDataModel
         {
             public int id { get; set; }
             public string? Name { get; set; }
