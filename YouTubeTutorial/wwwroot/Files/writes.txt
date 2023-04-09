@@ -1,0 +1,26 @@
+1/12/2023 11:12:53 PM1/12/2023 11:13:04 PM
+1/12/2023 11:13:25 PM
+1/12/2023 11:13:35 PM
+
+
+create table student(
+id int primary key identity(1,1),
+name nvarchar(max),
+mobile nvarchar(max)
+)
+
+create table addresses(
+id int primary key identity(1,1),
+studentid nvarchar(max),
+address nvarchar(max)
+)
+
+create table vehicle(
+id int primary key identity(1,1),
+addressid nvarchar(max),
+vehiclenumber nvarchar(max)
+)
+
+select * from student s
+join addresses a on a.studentid = s.id
+join vehicle v on v.addressid = a.id
