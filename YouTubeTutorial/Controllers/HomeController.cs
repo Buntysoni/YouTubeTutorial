@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YouTubeTutorial.BLL.Interface;
 using YouTubeTutorial.Data.context;
 
 namespace YouTubeTutorial.Controllers
 {
+    [MemoryDiagnoser]
     [ApiController]
     [Route("[controller]")]
     public class HomeController : ControllerBase
@@ -27,7 +30,12 @@ namespace YouTubeTutorial.Controllers
         [HttpGet("GetData")]
         public IActionResult GetData()
         {
-            var studentJoinData = _context.tbl_student.Include(x=>x.tbl_subject).ToList();
+            var dTA = _context.tbl_student.FirstOrDefault();
+            dTA.name = "abc";
+            _context.SaveChanges();
+
+            //Gte();
+            var studentJoinData = _context.tbl_student.AsNoTracking().Include(x=>x.tbl_subject).ToList();
 
             var studentJoinDataTwo = _context.tbl_student.Join(_context.tbl_subject, st => st.subjectid, sb => sb.subjectid,
                 (st, sb) => new
@@ -39,6 +47,19 @@ namespace YouTubeTutorial.Controllers
 
             return Ok(studentJoinDataTwo);
         }
+
+        //[NonAction]
+        //[Benchmark]
+        //public void Gte()
+        //{
+        //    var studentJoinDataTwo = _context.tbl_student.Join(_context.tbl_subject, st => st.subjectid, sb => sb.subjectid,
+        //        (st, sb) => new
+        //        {
+        //            st.studentid,
+        //            st.name,
+        //            sb.subjectname
+        //        }).ToList();
+        //}
 
         [HttpPost("SaveDataQueryString")]
         public IActionResult SaveDataQueryString(string firstname, string lastname)
