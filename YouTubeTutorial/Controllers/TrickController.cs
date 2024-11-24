@@ -8,7 +8,18 @@ namespace YouTubeTutorial.Controllers
         public IActionResult Index()
         {
             ViewBag.Employees = EmployeeList().ToList().ToHtml();
+
+            //advance trick of string
+            string abc = "abcdefghijklmnopqwxyz";
+            string aaa = abc.Between('f', 'm').Get();
+            string ccc = abc.Between('f', 'm').Remove();
             return View();
+        }
+        
+        public IActionResult JsonIndex()
+        {
+            var data = EmployeeList().ToList().ToJson();
+            return Ok(data);
         }
 
         private List<Employee> EmployeeList()
